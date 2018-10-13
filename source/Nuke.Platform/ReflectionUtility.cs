@@ -9,7 +9,7 @@ using Nuke.Common.Utilities.Collections;
 
 namespace Nuke.Common.Execution
 {
-    public static class ReflectionService
+    public static class ReflectionUtility
     {
         public const BindingFlags All = Static | Instance;
 

@@ -33,7 +33,7 @@ namespace Nuke.Common.Execution
                 var valueType = value.GetType();
                 ControlFlow.Assert(memberType.IsAssignableFrom(valueType),
                     $"Field '{member.Name}' must be of type '{valueType.Name}' to get its valued injected from '{attribute.GetType().Name}'.");
-                ReflectionService.SetValue(build, member, value);
+                ReflectionUtility.SetValue(build, member, value);
 
                 anyInjected = true;
             }

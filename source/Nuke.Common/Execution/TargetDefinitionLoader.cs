@@ -36,9 +36,9 @@ namespace Nuke.Common.Execution
             string[] GetNames(IEnumerable<TargetDefinition> targets)
                 => targets.Select(x => x.Name).ToArray();
 
-            ReflectionService.SetValue(build, nameof(NukeBuild.InvokedTargets), GetNames(invokedTargets));
-            ReflectionService.SetValue(build, nameof(NukeBuild.SkippedTargets), GetNames(skippedTargets));
-            ReflectionService.SetValue(build, nameof(NukeBuild.ExecutingTargets), GetNames(executingTargets.Except(skippedTargets)));
+            ReflectionUtility.SetValue(build, nameof(NukeBuild.InvokedTargets), GetNames(invokedTargets));
+            ReflectionUtility.SetValue(build, nameof(NukeBuild.SkippedTargets), GetNames(skippedTargets));
+            ReflectionUtility.SetValue(build, nameof(NukeBuild.ExecutingTargets), GetNames(executingTargets.Except(skippedTargets)));
 
             return executingTargets;
         }

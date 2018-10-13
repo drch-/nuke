@@ -19,7 +19,7 @@ namespace Nuke.Common.Execution
         {
             var defaultTarget = defaultTargetExpression.Compile().Invoke(build);
             var targetDefinitions = build.GetType()
-                .GetProperties(ReflectionService.Instance)
+                .GetProperties(ReflectionUtility.Instance)
                 .Where(x => x.PropertyType == typeof(Target))
                 .Select(x => LoadTargetDefinition(build, x)).ToList();
 
@@ -67,12 +67,12 @@ namespace Nuke.Common.Execution
         public static IReadOnlyCollection<MemberInfo> GetInjectionMembers(this NukeBuild build)
         {
             var members = build.GetType()
-                .GetMembers(ReflectionService.All)
+                .GetMembers(ReflectionUtility.All)
                 .Where(x => x.GetCustomAttributes<InjectionAttributeBase>().Any()).ToList();
 
             var transitiveMembers = members
                 .SelectMany(x => x.GetCustomAttributes<InjectionAttributeBase>())
-                .SelectMany(x => x.GetType().GetMembers(ReflectionService.All))
+                .SelectMany(x => x.GetType().GetMembers(ReflectionUtility.All))
                 .Where(x => x.GetCustomAttributes<InjectionAttributeBase>().Any()).ToList();
 
             return members.Concat(transitiveMembers).ToList();
