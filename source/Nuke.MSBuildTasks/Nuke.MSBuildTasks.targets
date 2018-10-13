@@ -1,16 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  
+  <!-- BEGIN EXTERNAL FILES TASKS -->
+  
+  <UsingTask
+    TaskName="Nuke.MSBuildTasks.ExternalFilesTask"
+    AssemblyFile="$(MSBuildThisFileDirectory)\Nuke.MSBuildTasks.dll" />
+
+  <PropertyGroup>
+    <NukeContinueOnError Condition="'$(NukeContinueOnError)' == ''">False</NukeContinueOnError>
+    <NukeTimeout Condition="'$(NukeTimeout)' == ''">5000</NukeTimeout>
+  </PropertyGroup>
+  
+  <Target Name="NukeExternalFiles" BeforeTargets="CoreCompile">
+    <ExternalFilesTask
+      ExternalFiles="@(NukeExternalFiles)"
+      Timeout="$(NukeTimeout)"
+      ContinueOnError="$(NukeContinueOnError)" />
+  </Target>
+
+  <!-- END EXTERNAL FILES TASKS -->
+  
+  <!-- END CODE GENERATOR TASKS -->
+
+  <UsingTask
+    TaskName="Nuke.MSBuildTasks.CodeGeneratorTask"
+    AssemblyFile="$(MSBuildThisFileDirectory)\Nuke.MSBuildTasks.dll" />
+  
   <PropertyGroup>
     <NukeBaseDirectory Condition="'$(NukeBaseDirectory)' == ''">$(MSBuildProjectDirectory)</NukeBaseDirectory>
     <NukeUseNestedNamespaces Condition="'$(NukeUseNestedNamespaces)' == ''">False</NukeUseNestedNamespaces>
     <NukeRepositoryUrl Condition="'$(NukeRepositoryUrl)' == ''">$(RepositoryUrl)</NukeRepositoryUrl>
     <NukeUpdateReferences Condition="'$(NukeUpdateReferences)' == ''">True</NukeUpdateReferences>
   </PropertyGroup>
-  
-  <UsingTask
-    TaskName="Nuke.CodeGeneration.CodeGeneratorTask"
-    AssemblyFile="$(MSBuildThisFileDirectory)\Nuke.CodeGeneration.dll" />
-  
+
   <Target Name="NukeCodeGeneration" BeforeTargets="CoreCompile"
           Condition="'$(NukeCodeGeneration)' == 'True' And '$(DOTNET_EXE)' == ''">
     <!-- TODO: output all metadata files -->
@@ -22,4 +45,7 @@
       UpdateReferences="$(NukeUpdateReferences)" />
     <Message Text="Generated tool APIs" />
   </Target>
+  
+  <!-- END CODE GENERATOR TASKS -->
+  
 </Project>
