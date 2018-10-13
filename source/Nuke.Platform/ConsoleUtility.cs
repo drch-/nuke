@@ -12,7 +12,7 @@ using Console = Colorful.Console;
 
 namespace Nuke.GlobalTool
 {
-    public class ConsoleHelper
+    public class ConsoleUtility
     {
         private static int BufferWidth => EnvironmentInfo.IsWin ? Console.BufferWidth - 1 : Console.BufferWidth;
 

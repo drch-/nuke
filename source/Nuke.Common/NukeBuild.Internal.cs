@@ -38,7 +38,7 @@ namespace Nuke.Common
 
         private static string[] GetInvokedTargets()
         {
-            var argument = ParameterService.Instance.GetCommandLineArgument<string>(position: 1);
+            var argument = ParameterUtility.Instance.GetCommandLineArgument<string>(position: 1);
             argument = argument == null || argument.StartsWith("-") ? null : argument;
 
             if (argument != null)

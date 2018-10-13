@@ -15,12 +15,12 @@ namespace Nuke.Common.Tests
 {
     public class ParameterServiceTest
     {
-        private ParameterService GetService(string[] commandLineArguments = null, IDictionary<string, string> environmentVariables = null)
+        private ParameterUtility GetService(string[] commandLineArguments = null, IDictionary<string, string> environmentVariables = null)
         {
             commandLineArguments = commandLineArguments ?? new string[0];
             environmentVariables = environmentVariables ?? new Dictionary<string, string>();
 
-            return new ParameterService(commandLineArguments, environmentVariables.AsReadOnly());
+            return new ParameterUtility(commandLineArguments, environmentVariables.AsReadOnly());
         }
 
         [Theory]

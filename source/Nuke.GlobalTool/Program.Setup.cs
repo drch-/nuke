@@ -52,7 +52,7 @@ namespace Nuke.GlobalTool
                 rootDirectory = EnvironmentInfo.WorkingDirectory;
             }
 
-            var solutionFile = ConsoleHelper.PromptForChoice(
+            var solutionFile = ConsoleUtility.PromptForChoice(
                 "Which solution should be the default?",
                 options: new DirectoryInfo(rootDirectory)
                     .EnumerateFiles("*", SearchOption.AllDirectories)
@@ -62,23 +62,23 @@ namespace Nuke.GlobalTool
                     .Concat((null, "None")).ToArray())?.FullName;
             var solutionDirectory = solutionFile != null ? Path.GetDirectoryName(solutionFile) : null;
 
-            var targetPlatform = ConsoleHelper.PromptForChoice("How should the build project be bootstrapped?",
+            var targetPlatform = ConsoleUtility.PromptForChoice("How should the build project be bootstrapped?",
                 (PLATFORM_NETCORE, ".NET Core SDK"),
                 (PLATFORM_NETFX, ".NET Framework/Mono"));
 
             var targetFramework = targetPlatform == PLATFORM_NETFX
                 ? FRAMEWORK_NET461
-                : ConsoleHelper.PromptForChoice("What target framework should be used?",
+                : ConsoleUtility.PromptForChoice("What target framework should be used?",
                     (FRAMEWORK_NETCOREAPP2, FRAMEWORK_NETCOREAPP2),
                     (FRAMEWORK_NET461, FRAMEWORK_NET461));
 
             var projectFormat = targetPlatform == PLATFORM_NETCORE
                 ? FORMAT_SDK
-                : ConsoleHelper.PromptForChoice("What format should the build project use?",
+                : ConsoleUtility.PromptForChoice("What format should the build project use?",
                     (FORMAT_SDK, "SDK-based Format: requires .NET Core SDK"),
                     (FORMAT_LEGACY, "Legacy Format: supported by all MSBuild/Mono versions"));
 
-            var nukeVersion = ConsoleHelper.PromptForChoice("Which NUKE version should be used?",
+            var nukeVersion = ConsoleUtility.PromptForChoice("Which NUKE version should be used?",
                 new[]
                     {
                         ("latest release", nukeLatestReleaseVersion.GetAwaiter().GetResult()),
@@ -90,8 +90,8 @@ namespace Nuke.GlobalTool
                     .Distinct(x => x.Item2)
                     .Select(x => (x.Item2, $"{x.Item2} ({x.Item1})")).ToArray());
 
-            var buildDirectoryName = ConsoleHelper.PromptForInput("Where should the build project be located?", "./build");
-            var buildProjectName = ConsoleHelper.PromptForInput("What should be the name for the build project?", "_build");
+            var buildDirectoryName = ConsoleUtility.PromptForInput("Where should the build project be located?", "./build");
+            var buildProjectName = ConsoleUtility.PromptForInput("What should be the name for the build project?", "_build");
 
             #endregion
 
@@ -101,31 +101,31 @@ namespace Nuke.GlobalTool
 
             if (solutionFile != null &&
                 projectFormat == FORMAT_SDK &&
-                ConsoleHelper.PromptForChoice(
+                ConsoleUtility.PromptForChoice(
                     "Do you need help getting started with a basic build?",
                     (true, "Yes, get me started!"),
                     (false, "No, I can do this myself...")))
             {
                 definitions.Add(
-                    ConsoleHelper.PromptForChoice("Restore, compile, pack using ...",
+                    ConsoleUtility.PromptForChoice("Restore, compile, pack using ...",
                         ("DOTNET", "dotnet CLI"),
                         ("MSBUILD", "MSBuild/Mono"),
                         (null, "Neither")));
 
                 definitions.Add(
-                    ConsoleHelper.PromptForChoice("Source files are located in ...",
+                    ConsoleUtility.PromptForChoice("Source files are located in ...",
                         ("SOURCE_DIR", "./source"),
                         ("SRC_DIR", "./src"),
                         (null, "Neither")));
 
                 definitions.Add(
-                    ConsoleHelper.PromptForChoice("Move packages to ...",
+                    ConsoleUtility.PromptForChoice("Move packages to ...",
                         ("OUTPUT_DIR", "./output"),
                         ("ARTIFACTS_DIR", "./artifacts"),
                         (null, "Neither")));
 
                 definitions.Add(
-                    ConsoleHelper.PromptForChoice("Where do test projects go?",
+                    ConsoleUtility.PromptForChoice("Where do test projects go?",
                         ("TESTS_DIR", "./tests"),
                         (null, "Same as source")));
 
@@ -134,7 +134,7 @@ namespace Nuke.GlobalTool
                 else
                 {
                     definitions.Add(
-                        ConsoleHelper.PromptForChoice("Do you use git?",
+                        ConsoleUtility.PromptForChoice("Do you use git?",
                             ("GIT", "Yes, just not setup yet"),
                             (null, "No, something else")));
                 }
@@ -144,7 +144,7 @@ namespace Nuke.GlobalTool
                 else if (definitions.Contains("GIT"))
                 {
                     definitions.Add(
-                        ConsoleHelper.PromptForChoice("Do you use GitVersion?",
+                        ConsoleUtility.PromptForChoice("Do you use GitVersion?",
                             ("GITVERSION", "Yes, just not setup yet"),
                             (null, "No, custom versioning")));
                 }
@@ -265,10 +265,10 @@ namespace Nuke.GlobalTool
             {
                 ControlFlow.Assert(definitions.Contains("SOURCE_DIR"), "definitions.Contains('SOURCE_DIR')");
 
-                var organization = ConsoleHelper.PromptForInput("Organization name:", defaultValue: "nuke-build");
-                var addonName = ConsoleHelper.PromptForInput("Organization name:", defaultValue: null);
-                var authors = ConsoleHelper.PromptForInput("Author names separated by comma:", defaultValue: "Matthias Koch, Sebastian Karasek");
-                var packageName = ConsoleHelper.PromptForInput("Package name on nuget.org:", defaultValue: null);
+                var organization = ConsoleUtility.PromptForInput("Organization name:", defaultValue: "nuke-build");
+                var addonName = ConsoleUtility.PromptForInput("Organization name:", defaultValue: null);
+                var authors = ConsoleUtility.PromptForInput("Author names separated by comma:", defaultValue: "Matthias Koch, Sebastian Karasek");
+                var packageName = ConsoleUtility.PromptForInput("Package name on nuget.org:", defaultValue: null);
 
                 TextTasks.WriteAllText(
                     Path.Combine(rootDirectory, "README.md"),

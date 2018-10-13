@@ -34,7 +34,7 @@ namespace Nuke.Common
         /// </summary>
         public static bool ParameterSwitch(string name)
         {
-            return ParameterService.Instance.GetParameter<bool>(name);
+            return ParameterUtility.Instance.GetParameter<bool>(name);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Nuke.Common
         [CanBeNull]
         public static string Parameter(string name)
         {
-            return ParameterService.Instance.GetParameter<string>(name);
+            return ParameterUtility.Instance.GetParameter<string>(name);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Nuke.Common
         [CanBeNull]
         public static T Parameter<T>(string name)
         {
-            return ParameterService.Instance.GetParameter<T>(name);
+            return ParameterUtility.Instance.GetParameter<T>(name);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Nuke.Common
         [CanBeNull]
         public static T[] ParameterSet<T>(string name, char? separator = null)
         {
-            return ParameterService.Instance.GetParameter<T[]>(name, separator);
+            return ParameterUtility.Instance.GetParameter<T[]>(name, separator);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Nuke.Common
         /// </summary>
         public static bool VariableSwitch(string name)
         {
-            return ParameterService.Instance.GetEnvironmentVariable<bool>(name);
+            return ParameterUtility.Instance.GetEnvironmentVariable<bool>(name);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace Nuke.Common
         [CanBeNull]
         public static string Variable(string name)
         {
-            return ParameterService.Instance.GetEnvironmentVariable<string>(name);
+            return ParameterUtility.Instance.GetEnvironmentVariable<string>(name);
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Nuke.Common
         [CanBeNull]
         public static T Variable<T>(string name)
         {
-            return ParameterService.Instance.GetEnvironmentVariable<T>(name);
+            return ParameterUtility.Instance.GetEnvironmentVariable<T>(name);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Nuke.Common
         [CanBeNull]
         public static T[] VariableSet<T>(string name, char? separator = null)
         {
-            return ParameterService.Instance.GetEnvironmentVariable<T[]>(name, separator);
+            return ParameterUtility.Instance.GetEnvironmentVariable<T[]>(name, separator);
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace Nuke.Common
         /// </summary>
         public static bool ArgumentSwitch(string name)
         {
-            return ParameterService.Instance.GetCommandLineArgument<bool>(name);
+            return ParameterUtility.Instance.GetCommandLineArgument<bool>(name);
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Nuke.Common
         [CanBeNull]
         public static string Argument(string name)
         {
-            return ParameterService.Instance.GetCommandLineArgument<string>(name);
+            return ParameterUtility.Instance.GetCommandLineArgument<string>(name);
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace Nuke.Common
         [CanBeNull]
         public static T Argument<T>(string name)
         {
-            return ParameterService.Instance.GetCommandLineArgument<T>(name);
+            return ParameterUtility.Instance.GetCommandLineArgument<T>(name);
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Nuke.Common
         [CanBeNull]
         public static T[] ArgumentSet<T>(string name, char? separator = null)
         {
-            return ParameterService.Instance.GetCommandLineArgument<T[]>(name, separator);
+            return ParameterUtility.Instance.GetCommandLineArgument<T[]>(name, separator);
         }
 
         /// <summary>

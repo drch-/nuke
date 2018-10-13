@@ -12,14 +12,14 @@ using Nuke.Common.Utilities.Collections;
 
 namespace Nuke.Common.Execution
 {
-    public class ParameterService
+    public class ParameterUtility
     {
-        private static ParameterService s_instance;
+        private static ParameterUtility s_instance;
 
         private readonly string[] _commandLineArguments;
         private readonly Func<IReadOnlyDictionary<string, string>> _environmentVariablesProvider;
 
-        public ParameterService(
+        public ParameterUtility(
             [CanBeNull] string[] commandLineArguments = null,
             [CanBeNull] IReadOnlyDictionary<string, string> environmentVariables = null)
         {
@@ -27,7 +27,7 @@ namespace Nuke.Common.Execution
             _commandLineArguments = commandLineArguments ?? EnvironmentInfo.CommandLineArguments;
         }
 
-        public static ParameterService Instance => s_instance ?? (s_instance = new ParameterService());
+        public static ParameterUtility Instance => s_instance ?? (s_instance = new ParameterUtility());
 
         [CanBeNull]
         public T GetParameter<T>(string parameterName, char? separator = null)
