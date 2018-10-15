@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   
-  <!-- BEGIN EXTERNAL FILES TASKS -->
+  <!-- BEGIN EXTERNAL FILES TASK -->
   
   <UsingTask
     TaskName="Nuke.MSBuildTasks.ExternalFilesTask"
@@ -19,9 +19,9 @@
       ContinueOnError="$(NukeContinueOnError)" />
   </Target>
 
-  <!-- END EXTERNAL FILES TASKS -->
+  <!-- END EXTERNAL FILES TASK -->
   
-  <!-- END CODE GENERATOR TASKS -->
+  <!-- END CODE GENERATOR TASK -->
 
   <UsingTask
     TaskName="Nuke.MSBuildTasks.CodeGeneratorTask"
@@ -46,6 +46,6 @@
     <Message Text="Generated tool APIs" />
   </Target>
   
-  <!-- END CODE GENERATOR TASKS -->
+  <!-- END CODE GENERATOR TASK -->
   
 </Project>
