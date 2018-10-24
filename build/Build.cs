@@ -153,37 +153,62 @@ partial class Build : NukeBuild
             DotNet($"tool install -g {GlobalToolProject.Name} --add-source {OutputDirectory} --version {GitVersion.NuGetVersionV2}");
         });
 
-    Target Test => _ => _
+    private Target Test => _ => _
         .DependsOn(Compile)
         .Executes(() =>
         {
-            var framework = "net461";
-            var xunitSettings = new Xunit2Settings()
-                .SetFramework(framework)
-                .AddTargetAssemblies(GlobFiles(Solution.Directory, $"*/bin/{Configuration}/{framework}/Nuke.*.Tests.dll").NotEmpty())
-                .AddResultReport(Xunit2ResultFormat.Xml, OutputDirectory / "tests.xml");
-
+            var frameworks =new List<string>{"netcoreapp2.0"};
             if (IsWin)
-            {
-                OpenCover(s => s
-                    .SetTargetSettings(xunitSettings)
-                    .SetOutput(OutputDirectory / "coverage.xml")
-                    .SetSearchDirectories(xunitSettings.TargetAssemblyWithConfigs.Select(x => Path.GetDirectoryName(x.Key)))
-                    .SetRegistration(RegistrationType.User)
-                    .SetTargetExitCodeOffset(targetExitCodeOffset: 0)
-                    .SetFilters(
-                        "+[*]*",
-                        "-[xunit.*]*",
-                        "-[FluentAssertions.*]*")
-                    .SetExcludeByAttributes("System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute"));
+                frameworks.Add("net461");
 
-                ReportGenerator(s => s
-                    .AddReports(OutputDirectory / "coverage.xml")
-                    .AddReportTypes(ReportTypes.Html)
-                    .SetTargetDirectory(OutputDirectory / "coverage"));
+            Xunit2Settings CreateTestSettings(string framework)
+            {
+                return new Xunit2Settings()
+                    .SetFramework(framework)
+                    .AddTargetAssemblies(GlobFiles(Solution.Directory, $"*/bin/{Configuration}/{framework}/Nuke.*.Tests.dll").NotEmpty())
+                    .AddResultReport(Xunit2ResultFormat.Xml, OutputDirectory / $"tests.{framework}.xml");
             }
-            else
-                Xunit2(s => xunitSettings);
+
+            var exceptions = new List<KeyValuePair<string, Exception>>();
+            frameworks.ForEach(framework =>
+            {
+                try
+                {
+                    var xunitSettings = CreateTestSettings(framework);
+                    if (IsWin && !framework.StartsWith("netcore"))
+                    {
+                        OpenCover(s => s
+                            .SetTargetSettings(xunitSettings)
+                            .SetOutput(OutputDirectory / $"coverage.{framework}.xml")
+                            .SetSearchDirectories(xunitSettings.TargetAssemblyWithConfigs.Select(x => Path.GetDirectoryName(x.Key)))
+                            .SetRegistration(RegistrationType.User)
+                            .SetTargetExitCodeOffset(targetExitCodeOffset: 0)
+                            .SetFilters(
+                                "+[*]*",
+                                "-[xunit.*]*",
+                                "-[FluentAssertions.*]*")
+                            .SetExcludeByAttributes("System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute"));
+
+                        ReportGenerator(s => s
+                            .AddReports(OutputDirectory / "coverage.xml")
+                            .AddReportTypes(ReportTypes.Html)
+                            .SetTargetDirectory(OutputDirectory / "coverage"));
+                    }
+                    else
+                        Xunit2(s => xunitSettings);
+                }
+                catch (Exception e)
+                {
+                    exceptions.Add(new KeyValuePair<string, Exception>(framework, e));
+                }
+               
+            });
+            if (exceptions.Any())
+            {
+                throw new AggregateException("Execution of tests failed.", exceptions.Select(x => new Exception($"Executing tests for '{x.Key}' failed.", x.Value)));
+            }
+
+           
         });
 
     Target Analysis => _ => _

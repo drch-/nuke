@@ -1,4 +1,4 @@
-// Copyright 2018 Maintainers of NUKE.
+﻿// Copyright 2018 Maintainers of NUKE.
 // Distributed under the MIT License.
 // https://github.com/nuke-build/nuke/blob/master/LICENSE
 
@@ -21,10 +21,21 @@ namespace Nuke.Common.Tools.Xunit
     {
         internal static string GetToolPath(string framework = null)
         {
+            string executable;
+            if (framework == null || !framework.StartsWith("netcore"))
+            {
+                executable = EnvironmentInfo.Is64Bit ? "xunit.console.exe" : "xunit.console.x86.exe";
+            }
+            else
+            {
+                executable = "xunit.console.dll";
+            }
+
             return ToolPathResolver.GetPackageExecutable(
-                packageId: "xunit.runner.console", 
-                packageExecutable: EnvironmentInfo.Is64Bit ? "xunit.console.exe" : "xunit.console.x86.exe", 
-                framework);
+                packageId: "xunit.runner.console",
+                packageExecutable: executable,
+                framework: framework
+            );
         }
 
         public static void Xunit2(
