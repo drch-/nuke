@@ -17,7 +17,8 @@ namespace Nuke.Common.ProjectModel
     {
         private static void Initialize(string workingDirectory)
         {
-            var dotnet = ToolPathResolver.GetPathExecutable("dotnet");
+            var dotnet = ToolPathResolver.TryGetEnvironmentExecutable("DOTNET_EXE") ??
+                         ToolPathResolver.GetPathExecutable("dotnet");
             var output = ProcessTasks.StartProcess(dotnet, "--info", workingDirectory).AssertZeroExitCode().Output;
             var basePath = (PathConstruction.AbsolutePath) output
                 .Select(x => x.Text.Trim())
@@ -26,14 +27,14 @@ namespace Nuke.Common.ProjectModel
 
             EnvironmentInfo.SetVariable("MSBUILD_EXE_PATH", basePath / "MSBuild.dll");
         }
-        
+
         public static Microsoft.Build.Evaluation.Project GetMSBuildProject(
             this Project project,
             string configuration = null,
             string targetFramework = null)
         {
             Initialize(project.Directory);
-            
+
             var projectCollection = new ProjectCollection();
             var msbuildProject = new Microsoft.Build.Evaluation.Project(
                 project.Path,
