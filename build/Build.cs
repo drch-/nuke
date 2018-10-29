@@ -10,6 +10,7 @@ using System.Text;
 using Nuke.Common;
 using Nuke.Common.Git;
 using Nuke.Common.ProjectModel;
+using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
 using Nuke.Common.Tools.InspectCode;
@@ -157,22 +158,14 @@ partial class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
-            var frameworks =new List<string>{"netcoreapp2.0"};
+            var frameworks = new List<string> { "netcoreapp2.0" };
             if (IsWin)
                 frameworks.Add("net461");
 
-            Xunit2Settings CreateTestSettings(string framework)
-            {
-                return new Xunit2Settings()
-                    .SetFramework(framework)
-                    .AddTargetAssemblies(GlobFiles(Solution.Directory, $"*/bin/{Configuration}/{framework}/Nuke.*.Tests.dll").NotEmpty())
-                    .AddResultReport(Xunit2ResultFormat.Xml, OutputDirectory / $"tests.{framework}.xml");
-            }
-
-            var exceptions = new List<KeyValuePair<string, Exception>>();
-            frameworks.ForEach(framework =>
-            {
-                try
+            frameworks
+                .AsParallel()
+                .WithDegreeOfParallelism(1)
+                .ForAll(framework =>
                 {
                     var xunitSettings = CreateTestSettings(framework);
                     if (IsWin && !framework.StartsWith("netcore"))
@@ -188,27 +181,25 @@ partial class Build : NukeBuild
                                 "-[xunit.*]*",
                                 "-[FluentAssertions.*]*")
                             .SetExcludeByAttributes("System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute"));
-
-                        ReportGenerator(s => s
-                            .AddReports(OutputDirectory / "coverage.xml")
-                            .AddReportTypes(ReportTypes.Html)
-                            .SetTargetDirectory(OutputDirectory / "coverage"));
                     }
                     else
                         Xunit2(s => xunitSettings);
-                }
-                catch (Exception e)
-                {
-                    exceptions.Add(new KeyValuePair<string, Exception>(framework, e));
-                }
-               
-            });
-            if (exceptions.Any())
+                });
+
+            if (IsWin)
             {
-                throw new AggregateException("Execution of tests failed.", exceptions.Select(x => new Exception($"Executing tests for '{x.Key}' failed.", x.Value)));
+                ReportGenerator(s => s
+                    .AddReports(OutputDirectory / "coverage.*.xml")
+                    .AddReportTypes(ReportTypes.Html)
+                    .SetTargetDirectory(OutputDirectory / "coverage"));
             }
 
-           
+            Xunit2Settings CreateTestSettings(string framework) {
+                return new Xunit2Settings()
+                    .SetFramework(framework)
+                    .AddTargetAssemblies(GlobFiles(Solution.Directory, $"*/bin/{Configuration}/{framework}/Nuke.*.Tests.dll").NotEmpty())
+                    .AddResultReport(Xunit2ResultFormat.Xml, OutputDirectory / $"tests.{framework}.xml");
+            }
         });
 
     Target Analysis => _ => _
